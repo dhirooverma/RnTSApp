@@ -60,8 +60,12 @@ const Input: any = (props) => {
     if (props.password && !passwordRegex.test(text)) {
       isValid = false;
     }
-    if (props.confirmPassword && props.signupData?.password?.value !== text) {
-      isValid = false;
+    if (props.confirmPassword) {
+      if (props.signupData && props.signupData.password && props.signupData.password.value === text) {
+        isValid = true;
+      } else {
+        isValid = false;
+      }
     }
     dispatch({ type: INPUT_CHANGE, value: text, isValid: isValid });
   };

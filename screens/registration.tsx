@@ -7,10 +7,10 @@ const Registration: FC<{ inputChangeHandler: (inputIdentifier: any, inputValue: 
     const passwordRef: any = useRef();
 
     const printRef = () => {
-        passwordRef?.current?.focus?.call();
-        let l1 = passwordRef?.current?.value;
-        let l2 = passwordRef?.current?.props;
-        console.log(l1, l2,);
+        // passwordRef?.current?.focus?.call();
+        // let l1 = passwordRef?.current?.value;
+        // let l2 = passwordRef?.current?.props;
+        // console.log(l1, l2,);
     }
     return (<>
         {/* <TextInput
@@ -77,7 +77,7 @@ const Registration: FC<{ inputChangeHandler: (inputIdentifier: any, inputValue: 
             password
         />
         <Input
-            passwordValue={passwordRef.current?.value}
+            passwordValue={passwordRef.current.value}
             id="confirmPassword"
             label="Confirm Password"
             errorText="Password not matching!"

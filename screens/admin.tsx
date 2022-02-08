@@ -14,9 +14,10 @@ import { CustomAlert, Loader } from '../components/components';
 import API from '../helper/api';
 import { Divider } from 'native-base';
 import { delay } from '../controller/commonFunction';
+import { get } from 'lodash';
 
 const Admin: FC = (props: any) => {
-    const userData = props?.route?.params?.userData;
+    const userData = get(props, "route.params.userData", {});
     const [userList, setUserList] = useState({});
     const [topLoader, setTopLoader] = useState(true);
     const [refreshing, setRefreshing] = useState(false);

@@ -47,7 +47,7 @@ const SelectBox: FC<requiedProp | any> = (props: any) => {
                     style={styles.selectBox}
                     onPress={openModal}
                     android_ripple={{ color: 'green' }}>
-                    <Text style={styles.selectBoxText}>{(selectedValue ?? "").toUpperCase()}</Text>
+                    <Text style={styles.selectBoxText}>{(selectedValue).toUpperCase()}</Text>
                     <Icon as={Ionicons} name="chevron-down-outline" />
                 </Pressable>
                 <Modal

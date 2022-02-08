@@ -9,6 +9,7 @@ import SelectBox from "../components/selectbox";
 import { CustomAlert, Label, Loader } from "../components/components";
 import { delay } from '../controller/commonFunction';
 import API from "../helper/api";
+import { get } from 'lodash';
 
 interface MyProps { }
 
@@ -39,7 +40,7 @@ export default class Login extends React.Component<any, MyState> {
         let valid = true;
         console.log(this.loginData);
         allFields.forEach((data: any) => {
-            if (!(data?.validity)) {
+            if (!(data.validity)) {
                 valid = false;
                 console.log("entered");
             }
@@ -47,8 +48,7 @@ export default class Login extends React.Component<any, MyState> {
         if (allFields.length > 0 && valid) {
             this.setState({ topLoader: true });
             await delay(1000);
-            let response = await API.login(this.loginData?.email?.value, this.loginData?.password?.value);
-            console.log(response.status)
+            let response = await API.login(get(this.loginData, "email.value", ""), get(this.loginData, "password.value", ""));
             let data = JSON.parse(JSON.stringify(this.loginData));
             if (response.status) {
                 this.loginData = {};
@@ -69,7 +69,7 @@ export default class Login extends React.Component<any, MyState> {
         let allFields = Object.values(this.signupData)
         let valid = true;
         allFields.forEach((data: any) => {
-            if (!(data?.validity)) {
+            if (!(data.validity)) {
                 valid = false;
             }
         });
@@ -82,7 +82,7 @@ export default class Login extends React.Component<any, MyState> {
                 let alreadyExist = false;
                 if (usersData.data.length > 0) {
                     for (const key in usersData.data) {
-                        if (usersData.data[key]['email'] == this.signupData?.email?.value) {
+                        if (usersData.data[key]['email'] == get(this.signupData, "email.value", "")) {
                             alreadyExist = true;
                             break;
                         }
@@ -93,11 +93,11 @@ export default class Login extends React.Component<any, MyState> {
                 } else {
                     this.signupData
                     let where = {
-                        first_name: this.signupData?.fName?.value,
-                        middle_name: this.signupData?.mName?.value ?? "",
-                        last_name: this.signupData?.lName?.value ?? "",
-                        email: this.signupData?.email?.value,
-                        password: this.signupData?.password?.value,
+                        first_name: get(this.signupData, "fName.value", ""),
+                        middle_name: get(this.signupData, "mName.value", ""),
+                        last_name: get(this.signupData, "lName.value", ""),
+                        email: get(this.signupData, "email.value", ""),
+                        password: get(this.signupData, "password.value", ""),
                     }
                     let response = await API.signup(where);
                     let data = JSON.parse(JSON.stringify(this.signupData));
@@ -122,11 +122,11 @@ export default class Login extends React.Component<any, MyState> {
 
     inputChangeHandler = (inputIdentifier: any, inputValue: any, inputValidity: any) => {
         if (this.state.registerPage) {
-            this.signupData[inputIdentifier] ??= {};
+            this.signupData[inputIdentifier] = this.signupData[inputIdentifier] || {};
             this.signupData[inputIdentifier]['value'] = inputValue;
             this.signupData[inputIdentifier]['validity'] = inputValidity;
         } else {
-            this.loginData[inputIdentifier] ??= {};
+            this.loginData[inputIdentifier] = this.loginData[inputIdentifier] || {};
             this.loginData[inputIdentifier]['value'] = inputValue;
             this.loginData[inputIdentifier]['validity'] = inputValidity;
         }
@@ -240,7 +240,7 @@ export default class Login extends React.Component<any, MyState> {
                                             autoCorrect={false}
                                             returnKeyType="next"
                                             onInputChange={this.inputChangeHandler}
-                                            initialValue={this.loginData?.email?.value ?? ""}
+                                            initialValue={get(this.loginData, "email.value", "")}
                                             // initiallyValid={true}
                                             required
                                             email
@@ -255,7 +255,7 @@ export default class Login extends React.Component<any, MyState> {
                                             autoCorrect={false}
                                             returnKeyType="next"
                                             onInputChange={this.inputChangeHandler}
-                                            initialValue={this.loginData?.password?.value ?? ""}
+                                            initialValue={get(this.loginData, "email.password", "")}
                                             // initiallyValid={false}
                                             required
                                             minLength={6}
