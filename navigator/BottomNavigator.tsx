@@ -17,7 +17,7 @@ const WelcomeTabs = (props) => {
             },
             tabBarActiveBackgroundColor: colors.LightGray,
         }}>
-            <Tab.Screen name="Welcome" component={Welcome} initialParams={props?.route?.params} options={{
+            <Tab.Screen name="WelcomeScreen" component={Welcome} initialParams={props?.route?.params} options={{
                 tabBarIcon: () => <Ionicons name="home-outline" size={22} />,
                 tabBarLabel: (opt) => <Text style={{ color: opt.focused ? colors.Red : colors.Black }}>Welcome</Text>,
                 tabBarStyle: { display: props?.route?.params?.userData?.role != "admin" ? "none" : "flex" },

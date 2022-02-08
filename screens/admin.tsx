@@ -22,6 +22,7 @@ import { useState } from 'react';
 import { CustomAlert, Loader } from '../components/components';
 import API from '../helper/api';
 import { Divider } from 'native-base';
+import { delay } from '../controller/commonFunction';
 
 const Admin = (props: any) => {
     const userData = props?.route?.params?.userData;
@@ -38,14 +39,15 @@ const Admin = (props: any) => {
     }, []);
 
     const getUserList = async (init = false) => {
-        init ? setRefreshing(true) : setRefreshing(true);
+        await delay(1000);
+        init ? setTopLoader(true) : setRefreshing(true);
         let usersData = await API.getUsers();
         if (usersData.status) {
             setUserList(usersData.data);
         } else {
             CustomAlert(usersData.msg);
         }
-        init ? setRefreshing(false) : setRefreshing(false);
+        init ? setTopLoader(false) : setRefreshing(false);
     }
 
     props.navigation.setOptions({ headerLeft: () => <TouchableHighlight style={{ marginLeft: 10 }} onPress={logout}><Ionicons name="power-outline" color={colors.Red} size={25} /></TouchableHighlight> })

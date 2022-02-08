@@ -55,8 +55,8 @@ export default class Login extends React.Component<any, MyState> {
                 this.props.navigation.replace('Welcome', { userData: response.data });
             } else {
                 CustomAlert(response.msg);
+                this.setState({ topLoader: false });
             }
-            this.setState({ topLoader: false });
         } else {
             CustomAlert("Please fill all required details");
         }
@@ -68,15 +68,14 @@ export default class Login extends React.Component<any, MyState> {
         await delay(500);
         let allFields = Object.values(this.signupData)
         let valid = true;
-        console.log(this.signupData);
         allFields.forEach((data: any) => {
             if (!(data?.validity)) {
                 valid = false;
-                console.log("entered");
             }
         });
         if (allFields.length > 0 && valid) {
             this.setState({ topLoader: true });
+            let successful = false
             await delay(1000);
             let usersData = await API.getUsers();
             if (usersData.status) {
@@ -104,6 +103,7 @@ export default class Login extends React.Component<any, MyState> {
                     let data = JSON.parse(JSON.stringify(this.signupData));
                     if (response.status) {
                         this.signupData = {};
+                        successful = true;
                         this.props.navigation.replace('Welcome', { userData: response.data });
                     } else {
                         CustomAlert(response.msg);
@@ -112,7 +112,9 @@ export default class Login extends React.Component<any, MyState> {
             } else {
                 CustomAlert(usersData.msg);
             }
-            this.setState({ topLoader: false });
+            if (!successful) {
+                this.setState({ topLoader: false });
+            }
         } else {
             CustomAlert("Please fill all required details");
         }
@@ -227,8 +229,9 @@ export default class Login extends React.Component<any, MyState> {
                                     <Image style={styles.logo} source={require('../assets/images/fmc.png')} />
                                 </View>
                                 {!this.state.registerPage ?
-                                    [
+                                    <>
                                         <Input
+                                            key={"email"}
                                             id="email"
                                             label="Email"
                                             errorText="Please enter a valid Email!"
@@ -241,7 +244,7 @@ export default class Login extends React.Component<any, MyState> {
                                             // initiallyValid={true}
                                             required
                                             email
-                                        />,
+                                        />
                                         <Input
                                             secureTextEntry={true}
                                             id="password"
@@ -256,19 +259,19 @@ export default class Login extends React.Component<any, MyState> {
                                             // initiallyValid={false}
                                             required
                                             minLength={6}
-                                        />,
-                                        // <View style={{ ...styles.column, width: '90%' }}>
-                                        //     <Label>Role</Label>
-                                        //     <SelectBox id={"role"} preSelected={'user'} onValueChange={this.onValueChange}>
-                                        //         <Picker.Item label="User" value="user" />
-                                        //         <Picker.Item label="Admin" value="admin" />
-                                        //         <Picker.Item label="Super user" value="super user" />
-                                        //     </SelectBox>
-                                        // </View>
-                                    ] : [
-                                        this.registrationUI()
-                                        // <Registration inputChangeHandler={this.inputChangeHandler} />
-                                    ]
+                                        />
+                                        {/* <View style={{ ...styles.column, width: '90%' }}>
+                                            <Label>Role</Label>
+                                            <SelectBox id={"role"} preSelected={'user'} onValueChange={this.onValueChange}>
+                                                <Picker.Item label="User" value="user" />
+                                                <Picker.Item label="Admin" value="admin" />
+                                                <Picker.Item label="Super user" value="super user" />
+                                            </SelectBox>
+                                        </View> */}
+                                    </> :
+                                    this.registrationUI()
+                                    // <Registration inputChangeHandler={this.inputChangeHandler} />
+
                                 }
                                 <Pressable
                                     style={styles.button}
