@@ -46,6 +46,23 @@ class API {
         return ret;
     }
 
+    static async deleteUsers(id) {
+        let ret: any = {};
+        try {
+            let res = await fetch(`http://127.0.0.1:8000/user_delete/${id}/`, {
+                method: "delete",
+            });
+            let response = await res.json();
+            if (response) {
+                ret = {status: true, data: response};
+            }
+        } catch (err) {
+            ret = {status: false, msg: "some error occur"};
+            console.log(err);
+        }
+        return ret;
+    }
+
     static async signup(data) {
         let where = {
             "first_name": data.first_name,
@@ -72,7 +89,11 @@ class API {
                 if (response["response"] == 1) {
                     ret = {status: true, data: response};
                 } else {
-                    ret = {status: false, "msg": response};
+                    if ((typeof response) == 'string') {
+                        ret = {status: false, "msg": response};
+                    } else if (typeof response == 'object') {
+                        ret = {status: false, "msg": JSON.stringify(response)};
+                    }
                 }
                 console.log(response);
             }

@@ -1,13 +1,4 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
-import React, { FC, useEffect, useLayoutEffect } from 'react';
+import React, { FC, useEffect } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import {
     FlatList,
@@ -24,11 +15,17 @@ import API from '../helper/api';
 import { Divider } from 'native-base';
 import { delay } from '../controller/commonFunction';
 
-const Admin = (props: any) => {
+const Admin: FC = (props: any) => {
     const userData = props?.route?.params?.userData;
     const [userList, setUserList] = useState({});
-    const [topLoader, setTopLoader] = useState(false);
+    const [topLoader, setTopLoader] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
+
+    const deleteUser = async (id) => {
+        setTopLoader(true);
+        API.deleteUsers(id)
+        getUserList(true);
+    }
 
     const logout = () => {
         props.navigation.replace('Login');
@@ -39,8 +36,8 @@ const Admin = (props: any) => {
     }, []);
 
     const getUserList = async (init = false) => {
-        await delay(1000);
-        init ? setTopLoader(true) : setRefreshing(true);
+        await delay(500);
+        !init && setRefreshing(true);
         let usersData = await API.getUsers();
         if (usersData.status) {
             setUserList(usersData.data);
@@ -48,6 +45,7 @@ const Admin = (props: any) => {
             CustomAlert(usersData.msg);
         }
         init ? setTopLoader(false) : setRefreshing(false);
+        console.log(userList);
     }
 
     props.navigation.setOptions({ headerLeft: () => <TouchableHighlight style={{ marginLeft: 10 }} onPress={logout}><Ionicons name="power-outline" color={colors.Red} size={25} /></TouchableHighlight> })
@@ -56,8 +54,8 @@ const Admin = (props: any) => {
         <View style={{ flexDirection: "row", justifyContent: 'space-between', padding: 5, opacity: userData.email == item.email ? 0.5 : 1 }}>
             <View style={{ flex: 8 }}><Text numberOfLines={1} style={styles.h5}>{item.email}</Text></View>
             <View style={{ flexDirection: "row", flex: 2, justifyContent: "flex-end" }}>
-                <TouchableHighlight onPress={logout}><Ionicons name="create-outline" color={colors.Red} size={25} /></TouchableHighlight>
-                <TouchableHighlight style={{ marginLeft: 10 }} onPress={logout}><Ionicons name="trash-outline" color={colors.Red} size={25} /></TouchableHighlight>
+                <TouchableHighlight><Ionicons name="create-outline" color={colors.Red} size={25} /></TouchableHighlight>
+                <TouchableHighlight style={{ marginLeft: 10 }} onPress={() => userData.email != item.email && deleteUser(item.id)}><Ionicons name="trash-outline" color={colors.Red} size={25} /></TouchableHighlight>
             </View>
         </View>
     );
