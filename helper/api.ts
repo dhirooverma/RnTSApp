@@ -1,7 +1,21 @@
 import { Platform } from 'react-native';
 class API {
-
+    
     static localhost = Platform.OS == 'android' ? 'http://10.0.2.2:8000' : 'http://127.0.0.1:8000';
+
+    static runAPI(apiName: string, method: string, body: object | undefined = undefined) {
+        let reqObject = {
+            method: method,
+        }
+        if (body) {
+            reqObject['headers'] = {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            };
+            reqObject['body'] = JSON.stringify(body);
+        }
+        return fetch(`${API.localhost}/${apiName}/`, reqObject);
+    }
 
     static async login(email: String , password) {
         let where ={
@@ -11,14 +25,7 @@ class API {
         console.log(where);
         let ret: object | any = {};
         try {
-            let res = await fetch(`${API.localhost}/login/`, {
-                method: "post",
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(where)
-            });
+            let res = await API.runAPI('login', "post", where);
             let response = await res.json();
             if (response) {
                 if (response['response'] == 1) {
@@ -38,7 +45,7 @@ class API {
     static async getUsers() {
         let ret: any = {};
         try {
-            let res = await fetch(`${API.localhost}/user_list/`);
+            let res = await API.runAPI('user_list', "get");
             let response = await res.json();
             if (response) {
                 ret = {status: true, data: response};
@@ -53,14 +60,7 @@ class API {
     static async deleteUsers(id) {
         let ret: any = {};
         try {
-            let res = await fetch(`${API.localhost}/user_delete/`, {
-                method: "post",
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({'id': id})
-            });
+            let res = await API.runAPI('user_delete', "post", {'id': id});
             let response = await res.json();
             if (response) {
                 ret = {status: true, data: response};
@@ -84,14 +84,7 @@ class API {
         console.log("=>>>>>>>>>>>>>", where);
         let ret: object | any = {};
         try {
-            let res = await fetch(`${API.localhost}/user_create/`, {
-                method: "post",
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(where)
-            });
+            let res = await API.runAPI('user_create', "post", where);
             let response = await res.json();
             console.log(response);
             if (response) {
