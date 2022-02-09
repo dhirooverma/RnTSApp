@@ -1,4 +1,8 @@
+import { Platform } from 'react-native';
 class API {
+
+    static localhost = Platform.OS == 'android' ? 'http://10.0.2.2:8000' : 'http://127.0.0.1:8000';
+
     static async login(email: String , password) {
         let where ={
             "email": email,
@@ -7,7 +11,7 @@ class API {
         console.log(where);
         let ret: object | any = {};
         try {
-            let res = await fetch("http://127.0.0.1:8000/login/", {
+            let res = await fetch(`${API.localhost}/login/`, {
                 method: "post",
                 headers: {
                     'Accept': 'application/json',
@@ -34,7 +38,7 @@ class API {
     static async getUsers() {
         let ret: any = {};
         try {
-            let res = await fetch("http://127.0.0.1:8000/user_list/");
+            let res = await fetch(`${API.localhost}/user_list/`);
             let response = await res.json();
             if (response) {
                 ret = {status: true, data: response};
@@ -49,8 +53,13 @@ class API {
     static async deleteUsers(id) {
         let ret: any = {};
         try {
-            let res = await fetch(`http://127.0.0.1:8000/user_delete/${id}/`, {
-                method: "delete",
+            let res = await fetch(`${API.localhost}/user_delete/`, {
+                method: "post",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({'id': id})
             });
             let response = await res.json();
             if (response) {
@@ -75,7 +84,7 @@ class API {
         console.log("=>>>>>>>>>>>>>", where);
         let ret: object | any = {};
         try {
-            let res = await fetch("http://127.0.0.1:8000/user_create/", {
+            let res = await fetch(`${API.localhost}/user_create/`, {
                 method: "post",
                 headers: {
                     'Accept': 'application/json',
