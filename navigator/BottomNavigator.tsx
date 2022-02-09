@@ -11,12 +11,13 @@ const Tab = createBottomTabNavigator();
 
 const WelcomeTabs = (props) => {
     return (
-        <Tab.Navigator screenOptions={{
+        <Tab.Navigator initialRouteName={get(props, "route.params.userData.role", "") == "admin" ? 'Admin' : 'WelcomeScreen'} screenOptions={{
             // headerShown: false,
             headerStyle: {
                 backgroundColor: colors.LightGray
             },
             tabBarActiveBackgroundColor: colors.LightGray,
+
         }}>
             <Tab.Screen name="WelcomeScreen" component={Welcome} initialParams={props.route.params} options={{
                 tabBarIcon: () => <Ionicons name="home-outline" size={22} />,
