@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View, Image, Pressable, StatusBar, ScrollView, Button, KeyboardAvoidingView, Alert, ActivityIndicator, TextInput, Keyboard } from "react-native";
+import { Text, View, Image, Pressable, StatusBar, ScrollView, Button, KeyboardAvoidingView, Alert, ActivityIndicator, TextInput, Keyboard, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Input from '../components/input';
 import colors from '../constants/colors';
@@ -35,7 +35,6 @@ export default class Login extends React.Component<any, MyState> {
 
     tryLogin = async () => {
         Keyboard.dismiss();
-        // let response = await API.login("lukky@gmail.com", "Lukky@123");
         let allFields = Object.values(this.loginData)
         let valid = true;
         console.log(this.loginData);
@@ -49,7 +48,6 @@ export default class Login extends React.Component<any, MyState> {
             this.setState({ topLoader: true });
             await delay(1000);
             let response = await API.login(get(this.loginData, "email.value", ""), get(this.loginData, "password.value", ""));
-            let data = JSON.parse(JSON.stringify(this.loginData));
             if (response.status) {
                 this.loginData = {};
                 this.props.navigation.replace('Welcome', { userData: response.data });
@@ -100,7 +98,6 @@ export default class Login extends React.Component<any, MyState> {
                         password: get(this.signupData, "password.value", ""),
                     }
                     let response = await API.signup(where);
-                    let data = JSON.parse(JSON.stringify(this.signupData));
                     if (response.status) {
                         this.signupData = {};
                         successful = true;
@@ -216,8 +213,9 @@ export default class Login extends React.Component<any, MyState> {
     }
 
     render() {
+        const behaviors = Platform.OS == 'ios' ? 'padding' : undefined;
         return (
-            <KeyboardAvoidingView style={{ flex: 1 }} behavior='padding'>
+            <KeyboardAvoidingView style={{ flex: 1 }} behavior={behaviors}>
                 <View style={styles.container}>
                     <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
                         <SafeAreaView>
@@ -256,7 +254,6 @@ export default class Login extends React.Component<any, MyState> {
                                             returnKeyType="next"
                                             onInputChange={this.inputChangeHandler}
                                             initialValue={get(this.loginData, "email.password", "")}
-                                            // initiallyValid={false}
                                             required
                                             minLength={6}
                                         />
@@ -270,7 +267,6 @@ export default class Login extends React.Component<any, MyState> {
                                         </View> */}
                                     </> :
                                     this.registrationUI()
-                                    // <Registration inputChangeHandler={this.inputChangeHandler} />
 
                                 }
                                 <Pressable
@@ -279,7 +275,7 @@ export default class Login extends React.Component<any, MyState> {
                                     android_ripple={{ color: 'white' }}>
                                     <Text style={styles.buttonText}>{this.state.registerPage ? "Sign Up" : "Login"}</Text>
                                 </Pressable>
-                                <Button onPress={this.toggleRegister} color={colors.White} title={this.state.registerPage ? "Go back to Login!" : "New User? Register!"} />
+                                <Text onPress={this.toggleRegister} style={{ margin: 5, fontSize: 20, color: colors.White }}>{this.state.registerPage ? "Go back to Login!" : "New User? Register!"}</Text>
                             </View>
                         </SafeAreaView>
                     </ScrollView>
