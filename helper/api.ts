@@ -1,20 +1,25 @@
 import { Platform } from 'react-native';
+interface APIInterface {
+    apiName: string, 
+    method: string, 
+    body?: object
+}
 class API {
     
     static localhost = Platform.OS == 'android' ? 'http://10.0.2.2:8000' : 'http://127.0.0.1:8000';
 
-    static runAPI(apiName: string, method: string, body: object | undefined = undefined) {
+    static runAPI(data: APIInterface) {
         let reqObject = {
-            method: method,
+            method: data.method,
         }
-        if (body) {
+        if (data.body) {
             reqObject['headers'] = {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             };
-            reqObject['body'] = JSON.stringify(body);
+            reqObject['body'] = JSON.stringify(data.body);
         }
-        return fetch(`${API.localhost}/${apiName}/`, reqObject);
+        return fetch(`${API.localhost}/${data.apiName}/`, reqObject);
     }
 
     static async login(email: String , password) {
@@ -25,7 +30,7 @@ class API {
         console.log(where);
         let ret: object | any = {};
         try {
-            let res = await API.runAPI('login', "post", where);
+            let res = await API.runAPI({apiName: 'login', method: "post", body: where});
             let response = await res.json();
             if (response) {
                 if (response['response'] == 1) {
@@ -45,7 +50,7 @@ class API {
     static async getUsers() {
         let ret: any = {};
         try {
-            let res = await API.runAPI('user_list', "get");
+            let res = await API.runAPI({apiName: 'user_list', method: "get"});
             let response = await res.json();
             if (response) {
                 ret = {status: true, data: response};
@@ -60,7 +65,7 @@ class API {
     static async deleteUsers(id) {
         let ret: any = {};
         try {
-            let res = await API.runAPI('user_delete', "post", {'id': id});
+            let res = await API.runAPI({apiName: 'user_delete', method: "post", body: {'id': id}});
             let response = await res.json();
             if (response) {
                 ret = {status: true, data: response};
@@ -84,7 +89,7 @@ class API {
         console.log("=>>>>>>>>>>>>>", where);
         let ret: object | any = {};
         try {
-            let res = await API.runAPI('user_create', "post", where);
+            let res = await API.runAPI({apiName: 'user_create', method: "post", body: where});
             let response = await res.json();
             console.log(response);
             if (response) {
