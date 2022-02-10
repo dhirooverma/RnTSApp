@@ -75,7 +75,15 @@ const Input = forwardRef((props: any, ref) => {
     dispatch({ type: INPUT_CHANGE, value: text, isValid: isValid });
   };
 
-  const lostFocusHandler = () => {
+  const lostFocusHandler = (e) => {
+    if (props.confirmPassword) {
+      // console.log("pass value inside confirm pass => ", props.signupData.password.value, e.nativeEvent.text);
+      if (props.signupData && props.signupData.password && props.signupData.password.value === e.nativeEvent.text) {
+        inputState.isValid = true;
+      } else {
+        inputState.isValid = false;
+      }
+    }
     dispatch({ type: INPUT_BLUR });
   };
 
