@@ -24,7 +24,7 @@ const inputReducer = (state: any, action: any) => {
   }
 };
 
-const Input: any = (props) => {
+const Input = forwardRef((props: any, ref) => {
   const [inputState, dispatch] = useReducer(inputReducer, {
     value: props.initialValue ? props.initialValue : '',
     isValid: props.initiallyValid ? props.initiallyValid : false,
@@ -40,6 +40,7 @@ const Input: any = (props) => {
   }, [inputState, onInputChange, id, initialValue]);
 
   const textChangeHandler = (text) => {
+    const onlyLetters = /^[a-zA-Z]+$/;
     const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
     let isValid = true;
@@ -68,6 +69,9 @@ const Input: any = (props) => {
         isValid = false;
       }
     }
+    if (props.onlyLetters && !onlyLetters.test(text.toLowerCase())) {
+      isValid = false;
+    }
     dispatch({ type: INPUT_CHANGE, value: text, isValid: isValid });
   };
 
@@ -80,6 +84,7 @@ const Input: any = (props) => {
       <Text style={styles.label}>{props.label}{props.required ? "*" : ""}</Text>
       <TextInput
         {...props}
+        ref={ref}
         style={props.disabled ? styles.inputDisabled : styles.input}
         value={inputState.value}
         onChangeText={textChangeHandler}
@@ -88,6 +93,6 @@ const Input: any = (props) => {
       {!props.disabled && !inputState.isValid && inputState.touched && <Text style={styles.warning}>{props.errorText}</Text>}
     </View>
   );
-}
+});
 
 export default Input;

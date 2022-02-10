@@ -1,15 +1,13 @@
-import React from "react";
+import React, { createRef } from "react";
 import { Text, View, Image, Pressable, StatusBar, ScrollView, Button, KeyboardAvoidingView, Alert, ActivityIndicator, TextInput, Keyboard, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Input from '../components/input';
 import colors from '../constants/colors';
 import styles from "../constants/customStyle";
-import { Picker } from '@react-native-picker/picker';
-import SelectBox from "../components/selectbox";
 import { CustomAlert, Label, Loader } from "../components/components";
 import { delay } from '../controller/commonFunction';
 import API from "../helper/api";
-import { get } from 'lodash';
+import { get, set } from 'lodash';
 
 interface MyProps { }
 
@@ -23,6 +21,15 @@ interface MyState {
 export default class Login extends React.Component<any, MyState> {
     loginData: any = {};
     signupData: any = {};
+    requiredFields: any = ['email', 'first_name', 'middile_name', 'last_name', 'password', 'confirm_password'];
+    emailRef: any = createRef();
+    fNameRef: any = createRef();
+    mNameRef: any = createRef();
+    lNameRef: any = createRef();
+    passwordRef: any = createRef();
+    cPasswordRef: any = createRef();
+    loginEmailRef: any = createRef();
+    loginPasswordRef: any = createRef();
 
     constructor(props: any) {
         super(props);
@@ -34,17 +41,15 @@ export default class Login extends React.Component<any, MyState> {
     }
 
     tryLogin = async () => {
+        this.loginEmailRef.current.focus();
+        this.loginPasswordRef.current.focus();
         Keyboard.dismiss();
-        let allFields = Object.values(this.loginData)
+        await delay(500);
         let valid = true;
-        console.log(this.loginData);
-        allFields.forEach((data: any) => {
-            if (!(data.validity)) {
-                valid = false;
-                console.log("entered");
-            }
-        });
-        if (allFields.length > 0 && valid) {
+        if (!get(this.loginData, "email.validity", false) || !get(this.loginData, "password.validity", false)) {
+            valid = false;
+        }
+        if (valid) {
             this.setState({ topLoader: true });
             await delay(1000);
             let response = await API.login(get(this.loginData, "email.value", ""), get(this.loginData, "password.value", ""));
@@ -62,16 +67,22 @@ export default class Login extends React.Component<any, MyState> {
     }
 
     trySignup = async () => {
+        this.emailRef.current.focus();
+        this.fNameRef.current.focus();
+        this.mNameRef.current.focus();
+        this.lNameRef.current.focus();
+        this.passwordRef.current.focus();
+        this.cPasswordRef.current.focus();
         Keyboard.dismiss();
         await delay(500);
-        let allFields = Object.values(this.signupData)
         let valid = true;
-        allFields.forEach((data: any) => {
-            if (!(data.validity)) {
+        this.requiredFields.forEach((field) => {
+            let isValid = get(this.signupData, `${field}.validity`, false);
+            if (!isValid) {
                 valid = false;
             }
         });
-        if (allFields.length > 0 && valid) {
+        if (valid) {
             this.setState({ topLoader: true });
             let successful = false
             await delay(1000);
@@ -91,9 +102,9 @@ export default class Login extends React.Component<any, MyState> {
                 } else {
                     this.signupData
                     let where = {
-                        first_name: get(this.signupData, "fName.value", ""),
-                        middle_name: get(this.signupData, "mName.value", ""),
-                        last_name: get(this.signupData, "lName.value", ""),
+                        first_name: get(this.signupData, "first_name.value", ""),
+                        middle_name: get(this.signupData, "middile_name.value", ""),
+                        last_name: get(this.signupData, "last_name.value", ""),
                         email: get(this.signupData, "email.value", ""),
                         password: get(this.signupData, "password.value", ""),
                     }
@@ -113,19 +124,18 @@ export default class Login extends React.Component<any, MyState> {
                 this.setState({ topLoader: false });
             }
         } else {
-            CustomAlert("Please fill all required details");
+            CustomAlert("Please fill all required fields with valid data");
         }
     }
 
     inputChangeHandler = (inputIdentifier: any, inputValue: any, inputValidity: any) => {
+        if (__DEV__) { console.log("on change ===>>", inputIdentifier, inputValue, inputValidity); }
         if (this.state.registerPage) {
-            this.signupData[inputIdentifier] = this.signupData[inputIdentifier] || {};
-            this.signupData[inputIdentifier]['value'] = inputValue;
-            this.signupData[inputIdentifier]['validity'] = inputValidity;
+            set(this.signupData, `${inputIdentifier}.value`, inputValue);
+            set(this.signupData, `${inputIdentifier}.validity`, inputValidity);
         } else {
-            this.loginData[inputIdentifier] = this.loginData[inputIdentifier] || {};
-            this.loginData[inputIdentifier]['value'] = inputValue;
-            this.loginData[inputIdentifier]['validity'] = inputValidity;
+            set(this.loginData, `${inputIdentifier}.value`, inputValue);
+            set(this.loginData, `${inputIdentifier}.validity`, inputValidity);
         }
     }
 
@@ -133,49 +143,53 @@ export default class Login extends React.Component<any, MyState> {
         this.setState({ registerPage: !this.state.registerPage });
     }
 
-    onValueChange = (itemValue: any, itemIndex: number) => {
-        console.log(itemValue);
-    }
-
     registrationUI() {
         return (<>
             <Input
-                id="fName"
+                ref={this.fNameRef}
+                id="first_name"
                 label="First Name"
-                errorText="Please enter a valid name!"
+                errorText="minimum 4 characters! only alphabet!"
                 autoCapitalize="none"
                 autoCorrect={false}
                 returnKeyType="next"
                 onInputChange={this.inputChangeHandler}
-                minLength={2}
+                minLength={4}
+                // autoFocus={true}
                 required
+                onlyLetters
             />
             <Input
-                id="mName"
+                ref={this.mNameRef}
+                id="middile_name"
                 label="Middle Name"
+                errorText="minimum 4 characters! only alphabet!"
                 autoCapitalize="none"
                 autoCorrect={false}
                 returnKeyType="next"
-                initiallyValid={true}
                 onInputChange={this.inputChangeHandler}
-                minLength={2}
+                minLength={4}
                 required
+                onlyLetters
             />
             <Input
-                id="lName"
+                ref={this.lNameRef}
+                id="last_name"
                 label="Last Name"
+                errorText="minimum 4 characters! only alphabet!"
                 autoCapitalize="none"
                 autoCorrect={false}
                 returnKeyType="next"
-                initiallyValid={true}
                 onInputChange={this.inputChangeHandler}
-                minLength={2}
+                minLength={4}
                 required
+                onlyLetters
             />
             <Input
+                ref={this.emailRef}
                 id="email"
                 label="Email"
-                errorText="Please enter a valid Email!"
+                errorText="Please enter valid Email!"
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -185,6 +199,7 @@ export default class Login extends React.Component<any, MyState> {
                 email
             />
             <Input
+                ref={this.passwordRef}
                 secureTextEntry={true}
                 id="password"
                 label="Password"
@@ -197,9 +212,10 @@ export default class Login extends React.Component<any, MyState> {
                 password
             />
             <Input
+                ref={this.cPasswordRef}
                 secureTextEntry={true}
                 signupData={this.signupData}
-                id="confirmPassword"
+                id="confirm_password"
                 label="Confirm Password"
                 errorText="Password not matching!"
                 autoCapitalize="none"
@@ -229,6 +245,7 @@ export default class Login extends React.Component<any, MyState> {
                                 {!this.state.registerPage ?
                                     <>
                                         <Input
+                                            ref={this.loginEmailRef}
                                             key={"email"}
                                             id="email"
                                             label="Email"
@@ -239,17 +256,19 @@ export default class Login extends React.Component<any, MyState> {
                                             returnKeyType="next"
                                             onInputChange={this.inputChangeHandler}
                                             initialValue={get(this.loginData, "email.value", "")}
-                                            // initiallyValid={true}
+                                            initiallyValid={false}
                                             required
                                             email
                                         />
                                         <Input
+                                            ref={this.loginPasswordRef}
                                             secureTextEntry={true}
                                             key="password"
                                             id="password"
                                             label="Password"
+                                            keyboardType='numeric'
                                             errorText="Please enter a valid Password!"
-                                            // keyboardType="email-address"
+                                            initiallyValid={false}
                                             autoCapitalize="none"
                                             autoCorrect={false}
                                             returnKeyType="next"
@@ -258,17 +277,8 @@ export default class Login extends React.Component<any, MyState> {
                                             required
                                             minLength={6}
                                         />
-                                        {/* <View style={{ ...styles.column, width: '90%' }}>
-                                            <Label>Role</Label>
-                                            <SelectBox id={"role"} preSelected={'user'} onValueChange={this.onValueChange}>
-                                                <Picker.Item label="User" value="user" />
-                                                <Picker.Item label="Admin" value="admin" />
-                                                <Picker.Item label="Super user" value="super user" />
-                                            </SelectBox>
-                                        </View> */}
                                     </> :
                                     this.registrationUI()
-
                                 }
                                 <Pressable
                                     style={styles.button}

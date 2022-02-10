@@ -152,6 +152,7 @@ export default class UserDetails extends React.Component<any, MyState> {
                                         onInputChange={this.inputChangeHandler}
                                         initialValue={get(this.userData, 'first_name.value', '')}
                                         minLength={2}
+                                        autoFocus={true}
                                         required
                                         disabled={!this.state.editMode}
                                         editable={this.state.editMode}
