@@ -245,6 +245,7 @@ export default class Login extends React.Component<any, MyState> {
                                         />
                                         <Input
                                             secureTextEntry={true}
+                                            key="password"
                                             id="password"
                                             label="Password"
                                             errorText="Please enter a valid Password!"

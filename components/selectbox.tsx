@@ -4,6 +4,7 @@ import React, { useState, FC, useMemo, useCallback } from "react";
 import { Button, Modal, Platform, Pressable, Text, TouchableWithoutFeedback, View } from "react-native";
 import styles from "../constants/customStyle";
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import colors from "../constants/colors";
 
 interface requiedProp {
     preSelected: String,
@@ -32,11 +33,12 @@ const SelectBox: FC<requiedProp | any> = (props: any) => {
     }, [selectedValue, props.preSelected])
 
     const openModal = () => {
-        setVisible(true);
+        if (!props.disabled) {
+            setVisible(true);
+        }
     }
 
     const closeModal = () => {
-        console.log("calleedd close modal", selectedValue);
         setVisible(false);
     }
 
@@ -44,11 +46,11 @@ const SelectBox: FC<requiedProp | any> = (props: any) => {
         return (
             <>
                 <Pressable
-                    style={styles.selectBox}
+                    style={{ ...styles.selectBox, backgroundColor: props.disabled ? 'rgba(256,256,256,0.1)' : colors.White }}
                     onPress={openModal}
                     android_ripple={{ color: 'green' }}>
-                    <Text style={styles.selectBoxText}>{(selectedValue).toUpperCase()}</Text>
-                    <Icon as={Ionicons} name="chevron-down-outline" />
+                    <Text style={{ ...styles.selectBoxText, color: props.disabled ? colors.White : colors.Black }}>{(selectedValue).toUpperCase()}</Text>
+                    <Icon as={Ionicons} name="chevron-down-outline" color={props.disabled ? colors.White : colors.Black} />
                 </Pressable>
                 <Modal
                     supportedOrientations={['portrait', 'landscape']}
@@ -83,7 +85,7 @@ const SelectBox: FC<requiedProp | any> = (props: any) => {
                 </Modal>
             </>
         )
-    }, [isVisible, selectedValue, props.preSelected])
+    }, [isVisible, selectedValue, props.preSelected, props.disabled])
     return Platform.OS == "android" ? androidView : iosView;
 }
 

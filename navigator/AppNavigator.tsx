@@ -6,6 +6,7 @@ import Login from "../screens/login";
 import { NativeBaseProvider } from "native-base";
 import colors from "../constants/colors";
 import WelcomeTabs from "./BottomNavigator";
+import UserDetails from "../screens/userDetails";
 
 const Stack = createNativeStackNavigator();
 export default class AppNavigator extends React.Component {
@@ -26,6 +27,11 @@ export default class AppNavigator extends React.Component {
                         name="Welcome"
                         component={WelcomeTabs}
                         options={{ title: 'Welcome', headerShown: false, }}
+                    />
+                    <Stack.Screen
+                        name="UserDetails"
+                        component={UserDetails}
+                        options={{ title: 'User Details', headerShown: true, headerBackTitleVisible: false }}
                     />
                 </Stack.Navigator>
             </NativeBaseProvider>

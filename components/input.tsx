@@ -1,6 +1,7 @@
 import React, { FC, useReducer, useEffect, forwardRef } from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import colors from '../constants/colors';
+import styles from '../constants/customStyle';
 
 const INPUT_CHANGE = 'INPUT_CHANGE';
 const INPUT_BLUR = 'INPUT_BLUR';
@@ -26,17 +27,17 @@ const inputReducer = (state: any, action: any) => {
 const Input: any = (props) => {
   const [inputState, dispatch] = useReducer(inputReducer, {
     value: props.initialValue ? props.initialValue : '',
-    isValid: props.initiallyValid,
+    isValid: props.initiallyValid ? props.initiallyValid : false,
     touched: false
   });
 
-  const { onInputChange, id } = props;
+  const { onInputChange, id, initialValue } = props;
 
   useEffect(() => {
     if (inputState.touched) {
       onInputChange(id, inputState.value, inputState.isValid);
     }
-  }, [inputState, onInputChange, id]);
+  }, [inputState, onInputChange, id, initialValue]);
 
   const textChangeHandler = (text) => {
     const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -75,43 +76,18 @@ const Input: any = (props) => {
   };
 
   return (
-    <View style={styles.formControl}>
-      <Text style={styles.label}>{props.label}</Text>
+    <View style={props.disabled ? styles.disabledFormControl : styles.formControl}>
+      <Text style={styles.label}>{props.label}{props.required ? "*" : ""}</Text>
       <TextInput
         {...props}
-        style={styles.input}
+        style={props.disabled ? styles.inputDisabled : styles.input}
         value={inputState.value}
         onChangeText={textChangeHandler}
         onBlur={lostFocusHandler}
       />
-      {!inputState.isValid && inputState.touched && <Text style={styles.warning}>{props.errorText}</Text>}
+      {!props.disabled && !inputState.isValid && inputState.touched && <Text style={styles.warning}>{props.errorText}</Text>}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  formControl: {
-    width: '90%',
-    minHeight: 110,
-  },
-  label: {
-    fontSize: 20,
-    marginVertical: 8,
-    color: 'white',
-  },
-  input: {
-    backgroundColor: '#fff',
-    paddingHorizontal: 2,
-    paddingVertical: 10,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 5,
-    fontSize: 20,
-  },
-  warning: {
-    color: colors.Yellow,
-    fontWeight: 'bold',
-  }
-});
 
 export default Input;

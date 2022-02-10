@@ -4,7 +4,7 @@ import Admin from '../screens/admin';
 import Welcome from '../screens/welcome';
 import colors from '../constants/colors';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 import { get } from 'lodash';
 
 const Tab = createBottomTabNavigator();
@@ -16,17 +16,18 @@ const WelcomeTabs = (props) => {
             headerStyle: {
                 backgroundColor: colors.LightGray
             },
-            tabBarActiveBackgroundColor: colors.LightGray,
+            tabBarInactiveBackgroundColor: colors.LightGrey,
+            tabBarActiveBackgroundColor: colors.LightBlack,
 
         }}>
             <Tab.Screen name="WelcomeScreen" component={Welcome} initialParams={props.route.params} options={{
-                tabBarIcon: () => <Ionicons name="home-outline" size={22} />,
-                tabBarLabel: (opt) => <Text style={{ color: opt.focused ? colors.Red : colors.Black }}>Welcome</Text>,
+                tabBarIcon: (opt) => <Ionicons name="home-outline" size={22} color={opt.focused ? colors.Red : colors.Black} />,
+                tabBarLabel: (opt) => <View style={{ marginHorizontal: 15 }}><Text style={{ color: opt.focused ? colors.Red : colors.Black }}>Home</Text></View>,
                 tabBarStyle: { display: get(props, "route.params.userData.role", "") != "admin" ? "none" : "flex" },
             }} />
             {get(props, "route.params.userData.role", "") == "admin" && <Tab.Screen name="Admin" component={Admin} initialParams={props.route.params} options={{
-                tabBarIcon: () => <Ionicons name="person-outline" size={22} />,
-                tabBarLabel: (opt) => <Text style={{ color: opt.focused ? colors.Red : colors.Black }}>Admin</Text>,
+                tabBarIcon: (opt) => <Ionicons name="person-outline" size={22} color={opt.focused ? colors.Red : colors.Black} />,
+                tabBarLabel: (opt) => <View style={{ marginHorizontal: 15 }}><Text style={{ color: opt.focused ? colors.Red : colors.Black }}>Admin</Text></View>,
                 title: "Admin Panel",
             }} />}
         </Tab.Navigator>

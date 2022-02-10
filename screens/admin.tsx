@@ -34,7 +34,14 @@ const Admin: FC = (props: any) => {
 
     useEffect(() => {
         getUserList(true);
+        const unsubscribe = props.navigation.addListener('focus', onBackFunction);
+        return () => { unsubscribe(); }
     }, []);
+
+    const onBackFunction = () => {
+        console.log("on back called", props);
+        getUserList(true);
+    }
 
     const getUserList = async (init = false) => {
         await delay(500);
@@ -51,11 +58,15 @@ const Admin: FC = (props: any) => {
 
     props.navigation.setOptions({ headerLeft: () => <TouchableHighlight style={{ marginLeft: 10 }} onPress={logout}><Ionicons name="power-outline" color={colors.Red} size={25} /></TouchableHighlight> })
 
+    const goToDetailPage = (data) => {
+        props.navigation.navigate('UserDetails', { userData: data });
+    }
+
     const _renderItem = ({ item }) => (
         <View style={{ flexDirection: "row", justifyContent: 'space-between', padding: 5, opacity: userData.email == item.email ? 0.5 : 1 }}>
             <View style={{ flex: 8 }}><Text numberOfLines={1} style={styles.h5}>{item.email}</Text></View>
             <View style={{ flexDirection: "row", flex: 2, justifyContent: "flex-end" }}>
-                <TouchableHighlight><Ionicons name="create-outline" color={colors.Red} size={25} /></TouchableHighlight>
+                <TouchableHighlight onPress={() => userData.email != item.email && goToDetailPage(item)}><Ionicons name="create-outline" color={colors.Red} size={25} /></TouchableHighlight>
                 <TouchableHighlight style={{ marginLeft: 10 }} onPress={() => userData.email != item.email && deleteUser(item.id)}><Ionicons name="trash-outline" color={colors.Red} size={25} /></TouchableHighlight>
             </View>
         </View>
