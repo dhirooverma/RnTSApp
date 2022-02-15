@@ -22,6 +22,12 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+  	<string>Accessing user location to show in map</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+  	<string>Using to pickup image</string>
+	<key>NSCameraUsageDescription</key>
+  	<string>Using in image picker package</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>

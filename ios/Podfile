@@ -6,6 +6,12 @@ platform :ios, '11.0'
 target 'RnTSApp' do
   config = use_native_modules!
 
+  pre_install do |installer|
+    $RNMBGL.pre_install(installer)
+  end
+
+  permissions_path = '../node_modules/react-native-permissions/ios'
+
   use_react_native!(
     :path => config[:reactNativePath],
     # to enable hermes on iOS, change `false` to `true` and then install pods
@@ -13,6 +19,9 @@ target 'RnTSApp' do
   )
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+  pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
+  pod 'Permission-PhotoLibrary', :path => "#{permissions_path}/PhotoLibrary"
+  pod 'Permission-LocationWhenInUse', :path => "#{permissions_path}/LocationWhenInUse"
 
   target 'RnTSAppTests' do
     inherit! :complete
@@ -26,6 +35,7 @@ target 'RnTSApp' do
   use_flipper!()
 
   post_install do |installer|
+    $RNMBGL.post_install(installer)
     react_native_post_install(installer)
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
   end

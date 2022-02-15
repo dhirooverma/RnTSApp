@@ -21,7 +21,7 @@ interface MyState {
 export default class Login extends React.Component<any, MyState> {
     loginData: any = {};
     signupData: any = {};
-    requiredFields: any = ['email', 'first_name', 'middile_name', 'last_name', 'password', 'confirm_password'];
+    requiredFields: any = ['email', 'first_name', 'middile_name', 'last_name', 'password'];
     emailRef: any = createRef();
     fNameRef: any = createRef();
     mNameRef: any = createRef();
@@ -83,6 +83,12 @@ export default class Login extends React.Component<any, MyState> {
             }
         });
         if (valid) {
+            let pass = get(this.signupData, `password.value`, "");
+            let confirmPass = get(this.signupData, `confirm_password.value`, "1");
+            if (pass !== confirmPass) {
+                CustomAlert("Password not matching with confirm password!");
+                return;
+            }
             this.setState({ topLoader: true });
             let successful = false
             await delay(1000);
@@ -217,9 +223,10 @@ export default class Login extends React.Component<any, MyState> {
                 signupData={this.signupData}
                 id="confirm_password"
                 label="Confirm Password"
-                errorText="Password not matching!"
+                // errorText="Password not matching!"
                 autoCapitalize="none"
                 autoCorrect={false}
+                // initialValue={'abcd'}
                 returnKeyType="next"
                 onInputChange={this.inputChangeHandler}
                 required
@@ -266,7 +273,7 @@ export default class Login extends React.Component<any, MyState> {
                                             key="password"
                                             id="password"
                                             label="Password"
-                                            keyboardType='numeric'
+                                            // keyboardType='numeric'
                                             errorText="Please enter a valid Password!"
                                             initiallyValid={false}
                                             autoCapitalize="none"
