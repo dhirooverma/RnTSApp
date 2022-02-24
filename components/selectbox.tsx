@@ -18,19 +18,22 @@ const SelectBox: FC<requiedProp | any> = (props: any) => {
     const [isVisible, setVisible] = useState(false);
 
     const androidView = useMemo(() => {
-        return (<Picker
-            {...props}
-            style={styles.picker}
-            selectedValue={selectedValue}
-            onValueChange={(itemValue, itemIndex) => {
-                setSelectedValue(itemValue);
-                props.onValueChange(itemValue, itemIndex);
-            }
-            }>
-            {props.children}
-        </Picker>);
+        return (
+            <Picker
+                {...props}
+                style={{ ...styles.selectBox, backgroundColor: props.disabled ? 'rgba(256,256,256,0.1)' : colors.White }}
+                selectedValue={selectedValue}
+                onValueChange={(itemValue, itemIndex) => {
+                    setSelectedValue(itemValue);
+                    props.onValueChange(itemValue, itemIndex);
+                }}
+                enabled={!props.disabled}
+            >
+                {props.children}
+            </Picker>
+        );
 
-    }, [selectedValue, props.preSelected])
+    }, [selectedValue, props.preSelected, props.disabled])
 
     const openModal = () => {
         if (!props.disabled) {

@@ -95,6 +95,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 5,
         fontSize: 20,
+        color: '#000'
     },
     inputDisabled: {
         backgroundColor: 'rgba(256,256,256,0.1)',

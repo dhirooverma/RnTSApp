@@ -61,7 +61,7 @@ export default class Login extends React.Component<any, MyState> {
                 this.setState({ topLoader: false });
             }
         } else {
-            CustomAlert("Please fill all required details");
+            CustomAlert("Please fill all required fields with valid data");
         }
 
     }
@@ -262,8 +262,9 @@ export default class Login extends React.Component<any, MyState> {
                                             autoCorrect={false}
                                             returnKeyType="next"
                                             onInputChange={this.inputChangeHandler}
-                                            initialValue={get(this.loginData, "email.value", "")}
-                                            initiallyValid={false}
+                                            // initialValue={get(this.loginData, "email.value", "")}
+                                            initialValue={'admin@gmail.com'}
+                                            initiallyValid={true}
                                             required
                                             email
                                         />
@@ -275,12 +276,13 @@ export default class Login extends React.Component<any, MyState> {
                                             label="Password"
                                             // keyboardType='numeric'
                                             errorText="Please enter a valid Password!"
-                                            initiallyValid={false}
+                                            initiallyValid={true}
                                             autoCapitalize="none"
                                             autoCorrect={false}
                                             returnKeyType="next"
                                             onInputChange={this.inputChangeHandler}
-                                            initialValue={get(this.loginData, "email.password", "")}
+                                            // initialValue={get(this.loginData, "email.password", "")}
+                                            initialValue={'dhiroo@1'}
                                             required
                                             minLength={6}
                                         />
